@@ -1,0 +1,23 @@
+{
+  "name": "lookma-only-hands",
+  "version": "1.0.0",
+  "description": "LeapJS and WebVR hands demo",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify js/main.js | uglifyjs -mc > app.js",
+    "dev": "watchify js/main.js -v -o app.js"
+  },
+  "author": "Martin Naumann <martin@geekonaut.de>",
+  "license": "ISC",
+  "devDependencies": {
+    "beefy": "^2.1.1",
+    "browserify": "^8.1.0",
+    "uglify-js": "^2.4.16",
+    "watchify": "^2.2.1"
+  },
+  "dependencies": {
+    "leapjs": "^0.6.4",
+    "leapjs-plugins": "^0.1.11-pre",
+    "three-world": "^2.0.0"
+  }
+}

@@ -1,0 +1,29 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/home/ubuntu/.nvm/v0.10.33/bin/node',
+1 verbose cli   '/home/ubuntu/.nvm/v0.10.33/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'dev' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.33
+4 verbose run-script [ 'predev', 'dev', 'postdev' ]
+5 info predev lookma-only-hands@1.0.0
+6 info dev lookma-only-hands@1.0.0
+7 verbose unsafe-perm in lifecycle true
+8 info lookma-only-hands@1.0.0 Failed to exec dev script
+9 error lookma-only-hands@1.0.0 dev: `watchify js/main.js:app.js`
+9 error Exit status 1
+10 error Failed at the lookma-only-hands@1.0.0 dev script.
+10 error This is most likely a problem with the lookma-only-hands package,
+10 error not with npm itself.
+10 error Tell the author that this fails on your system:
+10 error     watchify js/main.js:app.js
+10 error You can get their info via:
+10 error     npm owner ls lookma-only-hands
+10 error There is likely additional logging output above.
+11 error System Linux 3.14.13-c9
+12 error command "/home/ubuntu/.nvm/v0.10.33/bin/node" "/home/ubuntu/.nvm/v0.10.33/bin/npm" "run" "dev"
+13 error cwd /home/ubuntu/workspace/lookma-only-hands
+14 error node -v v0.10.33
+15 error npm -v 1.4.28
+16 error code ELIFECYCLE
+17 verbose exit [ 1, true ]
