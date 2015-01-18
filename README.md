@@ -8,7 +8,5 @@
 
 # 3D Web demos
 
-* [Look, ma, only hands!](lookma-only-hands/index.html)
-* [Hand of god](hand-of-god/index.html)
-* [Commons Gallery](cc-gallery/index.html)
-
+* [Look, ma, only hands!](http://avgp.github.io/3d-web-demos/lookma-only-hands/index.html)
+* [Hand of god](http://avgp.github.io/3d-web-demos/hand-of-god/index.html)
