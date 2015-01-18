@@ -18,6 +18,7 @@
   "dependencies": {
     "leapjs": "^0.6.4",
     "leapjs-plugins": "^0.1.11-pre",
+    "three": "^0.69.0",
     "three-world": "^2.0.0"
   }
 }

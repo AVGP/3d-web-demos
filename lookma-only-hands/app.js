@@ -1,7 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/ubuntu/workspace/lookma-only-hands/js/main.js":[function(require,module,exports){
 var Leap  = require('leapjs'),
     LeapPlugins = require('leapjs-plugins'),
-    World = require('three-world');
+    World = require('three-world'),
+    THREE = require('three');
 
 alert("Ready");
 
@@ -10,9 +11,13 @@ World.init({camDistance: 600});
 World.start();
 World.getCamera().position.y = 50;
 Leap.loop(function(frame){
-}).use('boneHand', { scene: World.getScene() });
+}).use('boneHand', {
+    scene: World.getScene(),
+    jointColor: new THREE.Color(0x00ff00),
+    arm: true
+});
 
-},{"leapjs":"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs/lib/index.js","leapjs-plugins":"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs-plugins/index.js","three-world":"/home/ubuntu/workspace/lookma-only-hands/node_modules/three-world/world.js"}],"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs-plugins/index.js":[function(require,module,exports){
+},{"leapjs":"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs/lib/index.js","leapjs-plugins":"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs-plugins/index.js","three":"/home/ubuntu/workspace/lookma-only-hands/node_modules/three/three.js","three-world":"/home/ubuntu/workspace/lookma-only-hands/node_modules/three-world/world.js"}],"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs-plugins/index.js":[function(require,module,exports){
 Leap = require('leapjs')
 require('./main/hand-entry/leap.hand-entry.js')
 require('./main/hand-hold/leap.hand-hold.js')
@@ -46606,7 +46611,9 @@ var World = (function() {
 
 module.exports = World;
 
-},{"three":"/home/ubuntu/workspace/lookma-only-hands/node_modules/three-world/node_modules/three/three.js"}],"/home/ubuntu/workspace/lookma-only-hands/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{"three":"/home/ubuntu/workspace/lookma-only-hands/node_modules/three-world/node_modules/three/three.js"}],"/home/ubuntu/workspace/lookma-only-hands/node_modules/three/three.js":[function(require,module,exports){
+module.exports=require("/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs-plugins/node_modules/three/three.js")
+},{"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs-plugins/node_modules/three/three.js":"/home/ubuntu/workspace/lookma-only-hands/node_modules/leapjs-plugins/node_modules/three/three.js"}],"/home/ubuntu/workspace/lookma-only-hands/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
