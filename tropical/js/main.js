@@ -1,7 +1,8 @@
 var THREE = require('three'),
     World = require('three-world'),
     Ocean = require('./ocean'),
-    OBJMTLLoader = require('./OBJMTLLoader');
+    OBJMTLLoader = require('./vendor/OBJMTLLoader'),
+    Stereo = require('./vendor/StereoEffect');
 
 // Auxilliary functions
 
@@ -15,6 +16,15 @@ function fullscreen(e) {
   } else if (e.target.webkitRequestFullscreen) {
     e.target.webkitRequestFullscreen();
   }
+
+  var width  = window.innerWidth,
+      height = window.innerHeight;
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  World.getRenderer().setSize(width, height);
+  VR.setSize(width, height);
 }
 
 function deg2rad(angle) {
@@ -50,6 +60,8 @@ World.init({
   rendererOpts: { antialias: true },
   renderCallback: function() {
     ocean.update();
+    VR.render(World.getScene(), camera);
+    return false;
   }
 });
 
@@ -60,6 +72,8 @@ var camera = World.getCamera();
 camera.position.set(0, 10, 20);
 camera.rotation.order = 'YXZ';
 
+var VR = new Stereo(World.getRenderer());
+VR.setSize(window.innerWidth, window.innerHeight);
 var loader = new OBJMTLLoader();
 loader.load('tropic/tropical2.obj', 'tropic/Small_Tropical_Island.mtl', function(mesh) {
   mesh.scale.set(0.1, 0.1, 0.1);
@@ -73,5 +87,5 @@ loader.load('tropic/tropical2.obj', 'tropic/Small_Tropical_Island.mtl', function
   World.start();
 });
 
-//window.addEventListener("deviceorientation", updateOrientation);
+window.addEventListener("deviceorientation", updateOrientation);
 document.querySelector("canvas").addEventListener('click', fullscreen, false);

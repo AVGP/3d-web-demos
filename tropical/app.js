@@ -1,4 +1,143 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/ubuntu/workspace/tropical/js/MTLLoader.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/ubuntu/workspace/tropical/js/main.js":[function(require,module,exports){
+var THREE = require('three'),
+    World = require('three-world'),
+    Ocean = require('./ocean'),
+    OBJMTLLoader = require('./vendor/OBJMTLLoader'),
+    Stereo = require('./vendor/StereoEffect');
+
+// Auxilliary functions
+
+function fullscreen(e) {
+  if (e.target.requestFullscreen) {
+    e.target.requestFullscreen();
+  } else if (e.target.msRequestFullscreen) {
+    e.target.msRequestFullscreen();
+  } else if (e.target.mozRequestFullScreen) {
+    e.target.mozRequestFullScreen();
+  } else if (e.target.webkitRequestFullscreen) {
+    e.target.webkitRequestFullscreen();
+  }
+
+  var width  = window.innerWidth,
+      height = window.innerHeight;
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  World.getRenderer().setSize(width, height);
+  VR.setSize(width, height);
+}
+
+function deg2rad(angle) {
+  return (angle / 180.0) * Math.PI;
+}
+
+function updateOrientation(e) {
+  var heading = e.alpha,
+      pitch   = e.gamma;
+
+  // Correcting the sensors being "clever"
+  if(Math.abs(e.beta) > 45) {
+    heading += 90;
+  } else {
+    heading -= 90;
+  }
+
+  if(pitch < 0) {
+    pitch = -90 - pitch;
+  } else {
+    pitch =  90 - pitch;
+  }
+
+  if(heading < 0) heading = 360 + heading;
+
+  camera.rotation.set(deg2rad(pitch), deg2rad(heading), 0);
+}
+
+// Go!
+
+World.init({
+  clearColor: 0x47a5ba,
+  rendererOpts: { antialias: true },
+  renderCallback: function() {
+    ocean.update();
+    VR.render(World.getScene(), camera);
+    return false;
+  }
+});
+
+var ocean = Ocean(World.getRenderer(), World.getCamera(), World.getScene(), "img/waternormals.jpg", "img/sky2.jpg");
+World.add(ocean);
+
+var camera = World.getCamera();
+camera.position.set(0, 10, 20);
+camera.rotation.order = 'YXZ';
+
+var VR = new Stereo(World.getRenderer());
+VR.setSize(window.innerWidth, window.innerHeight);
+var loader = new OBJMTLLoader();
+loader.load('tropic/tropical2.obj', 'tropic/Small_Tropical_Island.mtl', function(mesh) {
+  mesh.scale.set(0.1, 0.1, 0.1);
+  mesh.position.set(0, -1, 0);
+
+  World.add(mesh);
+  console.log("Ready");
+  document.querySelector("canvas").style.display = "block";
+  var loader = document.querySelector("img");
+  loader.parentNode.removeChild(loader);
+  World.start();
+});
+
+window.addEventListener("deviceorientation", updateOrientation);
+document.querySelector("canvas").addEventListener('click', fullscreen, false);
+
+},{"./ocean":"/home/ubuntu/workspace/tropical/js/ocean.js","./vendor/OBJMTLLoader":"/home/ubuntu/workspace/tropical/js/vendor/OBJMTLLoader.js","./vendor/StereoEffect":"/home/ubuntu/workspace/tropical/js/vendor/StereoEffect.js","three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js","three-world":"/home/ubuntu/workspace/tropical/node_modules/three-world/world.js"}],"/home/ubuntu/workspace/tropical/js/ocean.js":[function(require,module,exports){
+require('./vendor/water-material');
+
+var THREE = require('three');
+module.exports = function(renderer, camera, scene, waterNormalMap, skyTexture, waterColor, sunColor) {
+  var ocean = new THREE.Object3D();
+
+  var sun = new THREE.DirectionalLight(sunColor === undefined ? 0xffffff : sunColor, 0.5);
+  sun.position.set(-800, 800, 800);
+  ocean.add(sun);
+
+  var waterNormals = new THREE.ImageUtils.loadTexture(waterNormalMap);
+  		waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+
+  var water = new THREE.Water(renderer, camera, scene, {
+  	textureWidth: 256,
+  	textureHeight: 256,
+  	alpha: 	0.8,
+  	waterNormals: waterNormals,
+  	sunDirection: sun.position.normalize(),
+  	sunColor: sunColor === undefined ? 0xffffff : sunColor,
+  	waterColor: waterColor === undefined ? 0x00aaff : waterColor, //0x001e0f,
+  });
+
+  var aMeshMirror = new THREE.Mesh(
+  	new THREE.PlaneGeometry(2000, 2000, 100, 100),
+  	water.material
+  );
+
+  aMeshMirror.add(water);
+  aMeshMirror.rotation.x = - Math.PI * 0.5;
+  ocean.add(aMeshMirror);
+
+  var sky = new THREE.Mesh(new THREE.SphereGeometry(1200), new THREE.MeshBasicMaterial({
+    map: THREE.ImageUtils.loadTexture(skyTexture),
+    side: THREE.BackSide
+  }));
+  ocean.add(sky);
+
+  ocean.update = function() {
+    water.material.uniforms.time.value += 1.0 / 60.0;
+    water.render();
+  };
+
+  return ocean;
+}
+},{"./vendor/water-material":"/home/ubuntu/workspace/tropical/js/vendor/water-material.js","three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js"}],"/home/ubuntu/workspace/tropical/js/vendor/MTLLoader.js":[function(require,module,exports){
 /**
  * Loads a Wavefront .mtl file specifying materials
  *
@@ -434,7 +573,7 @@ THREE.EventDispatcher.prototype.apply( THREE.MTLLoader.prototype );
 
 module.exports = THREE.MTLLoader;
 
-},{"three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js"}],"/home/ubuntu/workspace/tropical/js/OBJMTLLoader.js":[function(require,module,exports){
+},{"three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js"}],"/home/ubuntu/workspace/tropical/js/vendor/OBJMTLLoader.js":[function(require,module,exports){
 /**
  * Loads a Wavefront .obj file with materials
  *
@@ -801,132 +940,92 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 
 module.exports = THREE.OBJMTLLoader;
 
-},{"./MTLLoader.js":"/home/ubuntu/workspace/tropical/js/MTLLoader.js","three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js"}],"/home/ubuntu/workspace/tropical/js/main.js":[function(require,module,exports){
-var THREE = require('three'),
-    World = require('three-world'),
-    Ocean = require('./ocean'),
-    OBJMTLLoader = require('./OBJMTLLoader');
-
-// Auxilliary functions
-
-function fullscreen(e) {
-  if (e.target.requestFullscreen) {
-    e.target.requestFullscreen();
-  } else if (e.target.msRequestFullscreen) {
-    e.target.msRequestFullscreen();
-  } else if (e.target.mozRequestFullScreen) {
-    e.target.mozRequestFullScreen();
-  } else if (e.target.webkitRequestFullscreen) {
-    e.target.webkitRequestFullscreen();
-  }
-}
-
-function deg2rad(angle) {
-  return (angle / 180.0) * Math.PI;
-}
-
-function updateOrientation(e) {
-  var heading = e.alpha,
-      pitch   = e.gamma;
-
-  // Correcting the sensors being "clever"
-  if(Math.abs(e.beta) > 45) {
-    heading += 90;
-  } else {
-    heading -= 90;
-  }
-
-  if(pitch < 0) {
-    pitch = -90 - pitch;
-  } else {
-    pitch =  90 - pitch;
-  }
-
-  if(heading < 0) heading = 360 + heading;
-
-  camera.rotation.set(deg2rad(pitch), deg2rad(heading), 0);
-}
-
-// Go!
-
-World.init({
-  clearColor: 0x47a5ba,
-  rendererOpts: { antialias: true },
-  renderCallback: function() {
-    ocean.update();
-  }
-});
-
-var ocean = Ocean(World.getRenderer(), World.getCamera(), World.getScene(), "img/waternormals.jpg", "img/sky2.jpg");
-World.add(ocean);
-
-var camera = World.getCamera();
-camera.position.set(0, 10, 20);
-camera.rotation.order = 'YXZ';
-
-var loader = new OBJMTLLoader();
-loader.load('tropic/tropical2.obj', 'tropic/Small_Tropical_Island.mtl', function(mesh) {
-  mesh.scale.set(0.1, 0.1, 0.1);
-  mesh.position.set(0, -1, 0);
-
-  World.add(mesh);
-  console.log("Ready");
-  document.querySelector("canvas").style.display = "block";
-  var loader = document.querySelector("img");
-  loader.parentNode.removeChild(loader);
-  World.start();
-});
-
-//window.addEventListener("deviceorientation", updateOrientation);
-document.querySelector("canvas").addEventListener('click', fullscreen, false);
-
-},{"./OBJMTLLoader":"/home/ubuntu/workspace/tropical/js/OBJMTLLoader.js","./ocean":"/home/ubuntu/workspace/tropical/js/ocean.js","three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js","three-world":"/home/ubuntu/workspace/tropical/node_modules/three-world/world.js"}],"/home/ubuntu/workspace/tropical/js/ocean.js":[function(require,module,exports){
-require('./water-material');
-
+},{"./MTLLoader.js":"/home/ubuntu/workspace/tropical/js/vendor/MTLLoader.js","three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js"}],"/home/ubuntu/workspace/tropical/js/vendor/StereoEffect.js":[function(require,module,exports){
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @authod mrdoob / http://mrdoob.com/
+ * @authod arodic / http://aleksandarrodic.com/
+ */
 var THREE = require('three');
-module.exports = function(renderer, camera, scene, waterNormalMap, skyTexture, waterColor, sunColor) {
-  var ocean = new THREE.Object3D();
 
-  var sun = new THREE.DirectionalLight(sunColor === undefined ? 0xffffff : sunColor, 0.5);
-  sun.position.set(-800, 800, 800);
-  ocean.add(sun);
+module.exports = function ( renderer ) {
 
-  var waterNormals = new THREE.ImageUtils.loadTexture(waterNormalMap);
-  		waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+	// API
 
-  var water = new THREE.Water(renderer, camera, scene, {
-  	textureWidth: 256,
-  	textureHeight: 256,
-  	alpha: 	0.8,
-  	waterNormals: waterNormals,
-  	sunDirection: sun.position.normalize(),
-  	sunColor: sunColor === undefined ? 0xffffff : sunColor,
-  	waterColor: waterColor === undefined ? 0x00aaff : waterColor, //0x001e0f,
-  });
+	this.separation = 3;
 
-  var aMeshMirror = new THREE.Mesh(
-  	new THREE.PlaneGeometry(2000, 2000, 100, 100),
-  	water.material
-  );
+	// internals
 
-  aMeshMirror.add(water);
-  aMeshMirror.rotation.x = - Math.PI * 0.5;
-  ocean.add(aMeshMirror);
+	var _width, _height;
 
-  var sky = new THREE.Mesh(new THREE.SphereGeometry(1200), new THREE.MeshBasicMaterial({
-    map: THREE.ImageUtils.loadTexture(skyTexture),
-    side: THREE.BackSide
-  }));
-  ocean.add(sky);
+	var _position = new THREE.Vector3();
+	var _quaternion = new THREE.Quaternion();
+	var _scale = new THREE.Vector3();
 
-  ocean.update = function() {
-    water.material.uniforms.time.value += 1.0 / 60.0;
-    water.render();
-  };
+	var _cameraL = new THREE.PerspectiveCamera();
+	var _cameraR = new THREE.PerspectiveCamera();
 
-  return ocean;
-}
-},{"./water-material":"/home/ubuntu/workspace/tropical/js/water-material.js","three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js"}],"/home/ubuntu/workspace/tropical/js/water-material.js":[function(require,module,exports){
+	// initialization
+
+	renderer.autoClear = false;
+
+	this.setSize = function ( width, height ) {
+
+		_width = width / 2;
+		_height = height;
+
+		renderer.setSize( width, height );
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		scene.updateMatrixWorld();
+
+		if ( camera.parent === undefined ) camera.updateMatrixWorld();
+
+		camera.matrixWorld.decompose( _position, _quaternion, _scale );
+
+		// left
+
+		_cameraL.fov = camera.fov;
+		_cameraL.aspect = 0.5 * camera.aspect;
+		_cameraL.near = camera.near;
+		_cameraL.far = camera.far;
+		_cameraL.updateProjectionMatrix();
+
+		_cameraL.position.copy( _position );
+		_cameraL.quaternion.copy( _quaternion );
+		_cameraL.translateX( - this.separation );
+		_cameraL.updateMatrixWorld();
+
+		// right
+
+		_cameraR.near = camera.near;
+		_cameraR.far = camera.far;
+		_cameraR.projectionMatrix = _cameraL.projectionMatrix;
+
+		_cameraR.position.copy( _position );
+		_cameraR.quaternion.copy( _quaternion );
+		_cameraR.translateX( this.separation );
+		_cameraR.updateMatrixWorld();
+
+		//
+
+		renderer.setViewport( 0, 0, _width * 2, _height );
+		renderer.clear();
+
+		renderer.setViewport( 0, 0, _width, _height );
+		renderer.render( scene, _cameraL );
+
+		renderer.setViewport( _width, 0, _width, _height );
+		renderer.render( scene, _cameraR );
+
+	};
+
+};
+
+},{"three":"/home/ubuntu/workspace/tropical/node_modules/three/three.js"}],"/home/ubuntu/workspace/tropical/js/vendor/water-material.js":[function(require,module,exports){
 /**
  * @author jbouny / https://github.com/jbouny
  *
@@ -1318,8 +1417,9 @@ var World = (function() {
 
   function render() {
     if (paused) return;
-    if(frameCallback) frameCallback();
-    renderer.render(scene, camera);
+    var callDefault = true;
+    if(frameCallback) callDefault = frameCallback();
+    if(callDefault) renderer.render(scene, camera);
     requestAnimationFrame(render);
   }
 
@@ -1390,7 +1490,7 @@ var World = (function() {
   self.getCamera = function() { return camera; };
   self.getRenderer = function() { return renderer; };
   self.getScene = function() { return scene; };
-  
+
   return self;
 })();
 

@@ -1,4 +1,4 @@
-require('./water-material');
+require('./vendor/water-material');
 
 var THREE = require('three');
 module.exports = function(renderer, camera, scene, waterNormalMap, skyTexture, waterColor, sunColor) {
