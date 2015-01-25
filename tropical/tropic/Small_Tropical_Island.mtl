@@ -1,0 +1,43 @@
+newmtl material_1
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+illum 1
+map_Kd Maps/snd1.jpg
+map_Bump Maps/terrain_mtl1_bumpamt.jpg
+
+newmtl material_1_grass
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+illum 1
+map_Kd Maps/grs1.jpg
+
+newmtl material_1_palm_leaves
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+illum 1
+map_Kd Maps/lv1.jpg
+
+newmtl material_1_palm_stems
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+illum 1
+map_Kd Maps/plvs1c.jpg
+
+newmtl material_1_plants
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+illum 1
+map_Kd Maps/arl1b.jpg
+
+newmtl material_1_rocks
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+illum 1
+map_Kd Maps/rc1.jpg
+
