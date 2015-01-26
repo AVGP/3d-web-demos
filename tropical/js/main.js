@@ -2,14 +2,10 @@ var THREE = require('three'),
     World = require('three-world'),
     Ocean = require('./ocean'),
     OBJMTLLoader = require('./vendor/OBJMTLLoader'),
-    Stereo = require('./vendor/StereoEffect');
+    Stereo = require('./vendor/StereoEffect'),
+    Audio  = require('./audio');
 
 var isVRmode = false;
-var ambient = new Audio('ambient.ogg');
-ambient.addEventListener('ended', function() {
-    this.currentTime = 0;
-    this.play();
-}, false);
 
 // Auxilliary functions
 
@@ -64,9 +60,11 @@ function updateOrientation(e) {
 
 // Go!
 
+var sfx = new Audio();
+
 World.init({
   clearColor: 0x47a5ba,
-  rendererOpts: { antialias: true },
+  rendUntitled4ererOpts: { antialias: true },
   renderCallback: function() {
     ocean.update();
     if(isVRmode) {
@@ -96,7 +94,7 @@ loader.load('tropic/tropical2.obj', 'tropic/Small_Tropical_Island.mtl', function
   var loader = document.querySelector("img");
   loader.parentNode.removeChild(loader);
   World.start();
-  ambient.play();
+  sfx.play();
 });
 
 window.addEventListener("deviceorientation", updateOrientation);

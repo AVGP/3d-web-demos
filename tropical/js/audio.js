@@ -1,0 +1,26 @@
+module.exports = function() {
+    var ambient = new Audio('sfx/ambient.ogg'),
+        waves   = new Audio('sfx/waves.mp3'),
+        birds   = new Audio('sfx/seagulls.mp3');
+
+    ambient.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    waves.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    birds.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+
+    return {
+        play: function() {
+            ambient.play();
+            waves.play();
+            birds.play();
+        }
+    }
+};
