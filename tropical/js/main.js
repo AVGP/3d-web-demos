@@ -3,11 +3,14 @@ var THREE = require('three'),
     Ocean = require('./ocean'),
     OBJMTLLoader = require('./vendor/OBJMTLLoader'),
     Stereo = require('./vendor/StereoEffect'),
-    Audio  = require('./audio');
+    Audio  = require('./audio'),
+    FlyCtrl = require('./vendor/FlyControls');
 
 var isVRmode = false;
 
 // Auxilliary functions
+
+var clock = new THREE.Clock();
 
 function fullscreen(e) {
   if (e.target.requestFullscreen) {
@@ -27,7 +30,7 @@ function fullscreen(e) {
   camera.updateProjectionMatrix();
 
   World.getRenderer().setSize(width, height);
-  VR.setSize(width, height);
+  if(isVRmode) VR.setSize(width, height);
 }
 
 function deg2rad(angle) {
@@ -67,6 +70,7 @@ World.init({
   rendUntitled4ererOpts: { antialias: true },
   renderCallback: function() {
     ocean.update();
+    controls.update(clock.getDelta());
     if(isVRmode) {
       VR.render(World.getScene(), camera);
       return false;
@@ -81,6 +85,13 @@ World.add(ocean);
 var camera = World.getCamera();
 camera.position.set(0, 10, 20);
 camera.rotation.order = 'YXZ';
+
+var controls = new FlyControls( camera );
+controls.movementSpeed = 100;
+controls.domElement = document.querySelector("canvas");
+controls.rollSpeed = Math.PI / 24;
+controls.autoForward = false;
+controls.dragToLook = false;
 
 var VR = undefined;
 var loader = new OBJMTLLoader();
