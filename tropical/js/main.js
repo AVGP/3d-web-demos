@@ -91,7 +91,7 @@ controls.movementSpeed = 100;
 controls.domElement = document.querySelector("canvas");
 controls.rollSpeed = Math.PI / 24;
 controls.autoForward = false;
-controls.dragToLook = false;
+controls.dragToLook = true;
 
 var VR = undefined;
 var loader = new OBJMTLLoader();
