@@ -4,6 +4,13 @@ var THREE = require('three'),
     OBJMTLLoader = require('./vendor/OBJMTLLoader'),
     Stereo = require('./vendor/StereoEffect');
 
+var isVRmode = false;
+var ambient = new Audio('ambient.ogg');
+ambient.addEventListener('ended', function() {
+    this.currentTime = 0;
+    this.play();
+}, false);
+
 // Auxilliary functions
 
 function fullscreen(e) {
@@ -32,6 +39,8 @@ function deg2rad(angle) {
 }
 
 function updateOrientation(e) {
+  if(!isVRmode) return;
+
   var heading = e.alpha,
       pitch   = e.gamma;
 
@@ -60,8 +69,11 @@ World.init({
   rendererOpts: { antialias: true },
   renderCallback: function() {
     ocean.update();
-    VR.render(World.getScene(), camera);
-    return false;
+    if(isVRmode) {
+      VR.render(World.getScene(), camera);
+      return false;
+    }
+    return true;
   }
 });
 
@@ -72,8 +84,7 @@ var camera = World.getCamera();
 camera.position.set(0, 10, 20);
 camera.rotation.order = 'YXZ';
 
-var VR = new Stereo(World.getRenderer());
-VR.setSize(window.innerWidth, window.innerHeight);
+var VR = undefined;
 var loader = new OBJMTLLoader();
 loader.load('tropic/tropical2.obj', 'tropic/Small_Tropical_Island.mtl', function(mesh) {
   mesh.scale.set(0.1, 0.1, 0.1);
@@ -85,7 +96,14 @@ loader.load('tropic/tropical2.obj', 'tropic/Small_Tropical_Island.mtl', function
   var loader = document.querySelector("img");
   loader.parentNode.removeChild(loader);
   World.start();
+  ambient.play();
 });
 
 window.addEventListener("deviceorientation", updateOrientation);
-document.querySelector("canvas").addEventListener('click', fullscreen, false);
+
+document.querySelector("canvas").addEventListener("click", fullscreen, false);
+document.querySelector("button").addEventListener("click", function() {
+  VR = new Stereo(World.getRenderer());
+  VR.setSize(window.innerWidth, window.innerHeight);
+  isVRmode = true;
+});
