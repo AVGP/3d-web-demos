@@ -113,7 +113,7 @@ window.addEventListener("deviceorientation", updateOrientation);
 
 document.querySelector("canvas").addEventListener("click", fullscreen, false);
 document.querySelector("button").addEventListener("click", function(e) {
-  fullscreen(e);
+//  fullscreen(e);
   VR = new VREffect(World.getRenderer());
   VR.setSize(window.innerWidth, window.innerHeight);
   isVRmode = true;
