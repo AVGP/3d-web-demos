@@ -1,7 +1,7 @@
 module.exports = function() {
-    var ambient = new Audio('sfx/ambient.ogg'),
-        waves   = new Audio('sfx/waves.mp3'),
-        birds   = new Audio('sfx/seagulls.mp3');
+    var waves   = new Audio('sfx/waves.mp3'),
+        birds   = new Audio('sfx/seagulls.mp3'),
+        ambient = new Audio('sfx/ambient.ogg');
 
     ambient.addEventListener('ended', function() {
         this.currentTime = 0;
