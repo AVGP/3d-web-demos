@@ -2,7 +2,7 @@ var THREE = require('three'),
     World = require('three-world'),
     Ocean = require('./ocean'),
     OBJMTLLoader = require('./vendor/OBJMTLLoader'),
-    VREffect = require('./vendor/VREffect'),
+    VREffect = require('./vendor/StereoEffect'),
     Audio  = require('./audio'),
     FlyCtrl = require('./vendor/FlyControls');
 
