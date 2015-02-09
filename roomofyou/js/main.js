@@ -91,6 +91,8 @@ World.init({
 World.start();
 
 var camera = World.getCamera();
+camera.fov = 75;
+camera.updateProjectionMatrix();
 
 Controls.init(World.getCamera());
 addLights(World, 0x006600, 0x000066);
