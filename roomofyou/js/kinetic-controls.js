@@ -29,7 +29,6 @@ module.exports = (function() {
       swingY = turnY;
 
       wasMoved = true;
-      e.stopPropagation();
       if(e.preventDefault) e.preventDefault();
     });
 
@@ -40,7 +39,6 @@ module.exports = (function() {
       camera.translateZ(1 - e.scale / 2);
       wasMoved = true;
 
-      e.stopPropagation();
       if(e.preventDefault) e.preventDefault();
     });
 
