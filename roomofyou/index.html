@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <title>Room of you</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style>
+    @keyframes pulsate {
+      from { text-shadow: -1px 1px 2px #080, 1px -1px 2px #080; }
+      to { text-shadow: -1px 1px 8px #0f0, 1px -1px 8px #8f8; }
+    }
+
+    @-webkit-keyframes pulsate {
+      from { text-shadow: -1px 1px 2px #080, 1px -1px 2px #080; }
+      to { text-shadow: -1px 1px 8px #0f0, 1px -1px 8px #8f8; }
+    }
+
+    @font-face {
+      font-family: 'Tr2n';
+      src: url('Tr2n.ttf') format('truetype');
+    }
+
+    html, body {
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+
+      height: 100%;
+      height: 100vh;
+
+      font-family: 'Tr2n', arial, helvetica, sans-serif;
+    }
+
+    #loading {
+      position: absolute;
+
+      width: 100%;
+      width: 100vw;
+
+      height: 100%;
+      height: 100vh;
+
+      background-image:url('loading_bg.gif');
+      background-size: cover;
+      text-align: center;
+    }
+
+    h1 {
+      position: absolute;
+      color: #060;
+      text-shadow: -1px 1px 8px #0f0, 1px -1px 8px #8f8;
+
+      font-size: 20em;
+      font-size: 20vmin;
+
+      animation-name: pulsate;
+      animation-duration: 2s;
+      animation-direction: alternate;
+
+      -webkit-animation-name: pulsate;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-iteration-count: infinite;
+
+      top: 50%;
+      top: 50vh;
+
+      width: 100%;
+
+      margin-top: -10em;
+      margin-top: -10vmin;
+    }
+  </style>
+</head>
+<body>
+  <noscript>
+    <h1>Please activate Javascript.</h1>
+  </noscript>
+  <div id="loading">
+    <h1>LOADING</h1>
+  </div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/hammer.js/1.1.3/hammer.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

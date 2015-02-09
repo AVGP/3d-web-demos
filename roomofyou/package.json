@@ -1,0 +1,22 @@
+{
+  "name": "room-of-you",
+  "version": "1.0.0",
+  "description": "showing the webcam feed on monitors around you. Weird.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "watchify js/main.js -o app.js -dv",
+    "build": "browserify js/main.js | uglifyjs -mc > app.js"
+  },
+  "author": "Martin Naumann <martin@geekonaut.de>",
+  "license": "ISC",
+  "dependencies": {
+    "hammerjs": "^2.0.4",
+    "three": "^0.69.0",
+    "three-world": ""
+  },
+  "devDependencies": {
+    "browserify": "^7.0.1",
+    "uglify-js": "^2.4.16",
+    "watchify": "^2.2.1"
+  }
+}
